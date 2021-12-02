@@ -99,7 +99,7 @@ def esios_bd(fecha):  #esta es la nueva que he creado cogiendo los datos de nues
 
 datos = esios_bd(today)
 
-fig = px.line(datos, x=datos['hora'], y=datos['valor'], color='fecha')
+fig = px.line(datos, x=datos['hora'], y=datos['valor'])
 
 
 
