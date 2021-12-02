@@ -9,6 +9,9 @@ import json
 from datetime import datetime
 import requests
 from datetime import date
+import pymysql
+import datetime
+import sqlalchemy as db
 
 #DE MOMENTO EL FICHERO RUN NO VALE PARA NADA.
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -18,11 +21,11 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets) #creas un o
 #aquí estamos creando la web por decirlo así estaría vacía. y los estilos
 #y luego tendrá distintas propiedades como layout que es para ir rellenando la web igual que haciamos en html
 
-today = datetime.today().strftime('%Y-%m-%d')
+today = datetime.datetime.today().strftime('%Y-%m-%d')
 
-def esios(fecha):
+def esios(fecha): #esta coge los datos de la api
 
-    hoy = datetime.today().strftime('%Y-%m-%d')
+    hoy = datetime.datetime.today().strftime('%Y-%m-%d')
     url = "https://api.esios.ree.es/archives/70/download_json?locale=es&date=" + fecha
     url2 = "https://api.esios.ree.es/archives/70/download_json?locale=es&date=" + hoy
 
@@ -61,13 +64,42 @@ def esios(fecha):
 
     return df_final
 
+def esios_bd(fecha):  #esta es la nueva que he creado cogiendo los datos de nuestra bd.
+    hoy = datetime.datetime.today().strftime('%Y-%m-%d')
+    tipo = "mysql+pymysql"
+    user = "admin"
+    password = "adminadmin"
+    host = "database-2.cwtwnmjvvlr5.eu-west-3.rds.amazonaws.com"
+    bbdd = "ECI"
+    hoy = datetime.datetime.today().strftime('%Y-%m-%d')
+    #Conectamos a BBDD
+    path = tipo + "://" + user + ":" + password + "@" + host + "/" + bbdd
+    engine = db.create_engine(path)
+    con = engine.connect()
+    #hoy = str(hoy)
+    query = "SELECT fecha, hora, valor FROM Pvpc WHERE fecha =" + f"'{hoy}'"  + ";"
+    tabla = con.execute(query)
+    df = pd.DataFrame(tabla)
+
+    query2 = "SELECT fecha, hora, valor FROM Pvpc WHERE fecha =" + f"'{fecha}'"  + ";"
+    tabla2 = con.execute(query2)
+    df2 = pd.DataFrame(tabla2)
+
+    df_final = pd.concat([df,df2])
+    df_final.columns = ["fecha", "hora", "valor"]
+
+    return df_final
+
+
+
+
 
 
 #df.index = df["Hora"]
 
-datos = esios(today)
+datos = esios_bd(today)
 
-fig = px.line(datos, x=datos['Hora'], y=datos['PCB'], color='Dia')
+fig = px.line(datos, x=datos['hora'], y=datos['valor'], color='fecha')
 
 
 
@@ -107,11 +139,11 @@ def update_output(date_value):
     Output("graph", "figure"),
     Input("select_day", "options"))
 def change_graph(fecha):  
-    data = esios(fecha)
+    data = esios_bd(fecha)
     fig = px.line(data,
-        x = data['Hora'],
-        y= data['PCB'],
-        color=data['Dia']
+        x = data['hora'],
+        y= data['valor'],
+        color=data['fecha']
     )  
     return fig
 
