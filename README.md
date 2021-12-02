@@ -2,5 +2,5 @@
 
 Practica realizada por:
 
-Rodrigo García
+Rodrigo García y 
 Rodrigo Hernández
