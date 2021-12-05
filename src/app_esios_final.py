@@ -6,9 +6,9 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.graph_objects as go
 import json
-from datetime import datetime, timedelta
+#from datetime import datetime, timedelta
 import requests
-from datetime import date
+#from datetime import date
 import pymysql
 import datetime
 import sqlalchemy as db
@@ -23,7 +23,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets) #creas un o
 
 today = datetime.datetime.today().strftime('%Y-%m-%d')
 fecha1 = datetime.datetime.today()
-fecha2 = fecha1 - timedelta(days=30)
+fecha2 = fecha1 - datetime.timedelta(days=30)
 fecha1 = fecha1.strftime('%Y-%m-%d')
 fecha2 = fecha2.strftime('%Y-%m-%d')
 
@@ -151,10 +151,10 @@ app.layout = html.Div(children=[  #PONEMOS LOS ATRIBUTOS A LA APP(WEB) UN TITULO
     ),
     dcc.DatePickerSingle(
         id='my-date-picker-single',
-        min_date_allowed=date(2016, 1, 1),
-        max_date_allowed=date(2021, 12, 31),
-        initial_visible_month=date(2021, 12, 1),
-        date=date(2021, 12, 1),
+        min_date_allowed=datetime.date(2016, 1, 1),
+        max_date_allowed=datetime.date(2021, 12, 31),
+        initial_visible_month=datetime.date(2021, 12, 1),
+        date=datetime.date(2021, 12, 1),
         display_format='Y-M-D'
     ),
     html.Div(id='select_day'),
@@ -168,11 +168,11 @@ app.layout = html.Div(children=[  #PONEMOS LOS ATRIBUTOS A LA APP(WEB) UN TITULO
     ),
     dcc.DatePickerRange(
         id='my-date-picker-range',
-        min_date_allowed=date(2016, 12, 1),
-        max_date_allowed=date(2021, 12, 31),
-        initial_visible_month=date(2021, 11, 1),
-        start_date=date(2021, 11, 1),
-        end_date=date(2021, 12, 1)
+        min_date_allowed=datetime.date(2016, 12, 1),
+        max_date_allowed=datetime.date(2021, 12, 31),
+        initial_visible_month=datetime.date(2021, 11, 1),
+        start_date=datetime.date(2021, 11, 1),
+        end_date=datetime.date(2021, 12, 1)
     ),
     html.Div(id='output-container-date-picker-range'),
 
@@ -187,7 +187,7 @@ app.layout = html.Div(children=[  #PONEMOS LOS ATRIBUTOS A LA APP(WEB) UN TITULO
     Input('my-date-picker-single', 'date'))
 def update_output(date_value):
     if date_value is not None:
-        date_object = date.fromisoformat(date_value)
+        date_object = datetime.date.fromisoformat(date_value)
         date_string = date_object.strftime('%Y-%m-%d')
         return date_string
 
@@ -212,11 +212,11 @@ def change_graph(fecha):
 def update_output2(start_date, end_date):
     string_prefix = 'You have selected: '
     if start_date is not None:
-        start_date_object = date.fromisoformat(start_date)
+        start_date_object = datetime.date.fromisoformat(start_date)
         start_date_string = start_date_object.strftime('%Y-%m-%d')
         string_prefix = string_prefix + 'Start Date: ' + start_date_string + ' | '
     if end_date is not None:
-        end_date_object = date.fromisoformat(end_date)
+        end_date_object = datetime.date.fromisoformat(end_date)
         end_date_string = end_date_object.strftime('%Y-%m-%d')
         string_prefix = string_prefix + 'End Date: ' + end_date_string
     if len(string_prefix) == len('You have selected: '):
@@ -244,5 +244,5 @@ def change_graph2(options):
     return fig2   
 
 if __name__ == "__main__":  #ejecuta la aplicacion..
-    app.run_server(host="127.0.0.1", debug=False, port=8050)  #QUE CORRA LA APLICACION DE ARRIBA.
+    app.run_server(host="0.0.0.0", debug=False, port=8080)  #QUE CORRA LA APLICACION DE ARRIBA.
    #app.run_server(host="0.0.0.0", debug=False, port=8080)
