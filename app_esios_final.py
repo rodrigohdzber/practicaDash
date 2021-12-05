@@ -243,6 +243,6 @@ def change_graph2(options):
         )  
     return fig2   
 
-if __name__ == "__main__":  #ejecuta la aplicacion.
+if __name__ == "__main__":  #ejecuta la aplicacion..
     app.run_server(host="127.0.0.1", debug=False, port=8050)  #QUE CORRA LA APLICACION DE ARRIBA.
    #app.run_server(host="0.0.0.0", debug=False, port=8080)
